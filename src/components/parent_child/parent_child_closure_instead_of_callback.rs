@@ -2,37 +2,39 @@ use ev::MouseEvent;
 use leptos::*;
 
 #[component]
-pub fn Child(
+pub fn Child<IncrementButton, DecrementButton>(
     counter: ReadSignal<i16>,
-    #[prop(into)] on_increment: Callback<MouseEvent>,
-    #[prop(into)] on_decrement: Callback<MouseEvent>,
-) -> impl IntoView {
+    on_increment: IncrementButton,
+    on_decrement: DecrementButton,
+) -> impl IntoView 
+where 
+    IncrementButton: FnMut(MouseEvent) + 'static,
+    DecrementButton: FnMut(MouseEvent) + 'static,
 
+{
 
     view! {
-        <div>
-            <div style="border: 1px solid black; margin: 4px">
-                <h3>"Child Callback"</h3>
+        <div style="border: 1px solid black; margin: 4px">
+                <h3>"Parent Callback"</h3>
                 <p>"Counter: " {counter}</p>
                 <div>
                     <button type="button" on:click=on_increment>
-                        "Child Increment"
+                        "Parent Increment"
                     </button>
                     <button type="button" on:click=on_decrement>
-                        "Child Decrement"
+                        "Parent Decrement"
                     </button>
                 </div>
             </div>
-        </div>
     }
 
 }
 
 
 #[component]
-pub fn ParentCallBack() -> impl IntoView {
+pub fn ParentClosureInsteadOfCallback() -> impl IntoView {
     
-    
+
     let (counter, set_counter) = create_signal::<i16>(0);
 
     let increment_counter = move |_| set_counter.update(|c| *c += 1);    
@@ -56,4 +58,4 @@ pub fn ParentCallBack() -> impl IntoView {
             
         </div>
     }
-}   
+}
