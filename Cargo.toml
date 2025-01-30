@@ -16,6 +16,10 @@ leptos_meta = { version = "0.6", features = ["nightly"] }
 leptos_actix = { version = "0.6", optional = true }
 leptos_router = { version = "0.6", features = ["nightly"] }
 wasm-bindgen = "=0.2.99"
+serde = { version = "1.0.217", features = ["derive"] }
+sqlx = { version = "0.8.3", features = ["runtime-tokio", "sqlite"] }
+uuid = { version = "1.12.1", features = ["v4"] }
+whoami = { version = "1.5.2", features = ["default"] }
 
 [features]
 csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
@@ -24,10 +28,13 @@ ssr = [
   "dep:actix-files",
   "dep:actix-web",
   "dep:leptos_actix",
+  "dep:sqlx",
+  "dep:uuid",
   "leptos/ssr",
   "leptos_meta/ssr",
   "leptos_router/ssr",
 ]
+
 
 # Defines a size-optimized profile for the WASM bundle in release mode
 [profile.wasm-release]

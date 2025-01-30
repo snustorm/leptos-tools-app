@@ -1,10 +1,13 @@
 #[cfg(feature = "ssr")]
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+
+    use std::io;
     use actix_files::Files;
     use actix_web::*;
     use leptos::*;
     use leptos_actix::{generate_route_list, LeptosRoutes};
+    use sqlx::{migrate, sqlite::SqlitePoolOptions};
     use tools_app::app::*;
 
     let conf = get_configuration(None).await.unwrap();
@@ -12,6 +15,16 @@ async fn main() -> std::io::Result<()> {
     // Generate the list of routes in your Leptos App
     let routes = generate_route_list(App);
     println!("listening on http://{}", &addr);
+
+    let db_pool = SqlitePoolOptions::new()
+    .connect("sqlite:/workspaces/20240703_build-web-apps-with-rust-and-leptos/projects/tools-app-final/toolsapp.sqlite")
+    .await
+    .map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+
+migrate!("./migrations")
+    .run(&db_pool)
+    .await
+    .unwrap_or_else(|_| panic!("could not run sqlx migration {}", whoami::username().as_str()));
 
     HttpServer::new(move || {
         let leptos_options = &conf.leptos_options;
